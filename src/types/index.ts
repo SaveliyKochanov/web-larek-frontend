@@ -25,8 +25,9 @@ export interface IProductsData {
 	savePreview(id: string): void;
 }
 
+export interface IBasket {
+	items: TProductBasket[];
+	total: number | null;
+}
+
 export type TProductBasket = Pick<IProduct, 'id' | 'title' | 'price'>;
-// export interface IOrderData {
-// 	payment: PaymentType;
-// 	address: string;
-// }
