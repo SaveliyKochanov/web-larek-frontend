@@ -9,40 +9,24 @@ export interface IProduct {
 	image: string;
 }
 
-export interface IBusket {
-	productList: IProduct[];
-	total: number | null;
-}
-
-export interface IBusketItem extends IBusket {
-	id: number;
-	title: string;
-	price: number | null;
-}
-
-export interface IOrder {
-	products: IProduct[];
-	total: number;
-	payment: PaymentType;
-	address: string;
-	phone: string;
-}
-
-export interface ICustomerData {
+export interface ICustomer {
 	email: string;
 	phone: string;
+	payment: PaymentType;
+	address: string;
 }
 
-export interface AppState {
+export interface IProductsData {
 	products: IProduct[];
-	selectedProduct: IProduct;
-
-	addProduct(product: IProduct): void;
-	deleteProduct(productId: string): void;
-	selectProduct(product: IProduct): void;
+	preview: string | null; //Для сохранения карточки, которую будем открывать
+	getProducts(): IProduct[];
+	getProduct(id: string): IProduct;
+	saveProduct(product: IProduct): void;
+	savePreview(id: string): void;
 }
 
-export interface IAppAPI {
-	getProducts: () => Promise<IProduct[]>;
-	getProduct: (id: string) => Promise<IProduct>;
-}
+export type TProductBasket = Pick<IProduct, 'id' | 'title' | 'price'>;
+// export interface IOrderData {
+// 	payment: PaymentType;
+// 	address: string;
+// }
