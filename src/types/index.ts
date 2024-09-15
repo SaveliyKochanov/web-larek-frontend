@@ -19,10 +19,11 @@ export interface ICustomer {
 export interface IProductsData {
 	products: IProduct[];
 	preview: string | null; //Для сохранения карточки, которую будем открывать
+	setProducts(products: IProduct[]): void;
 	getProducts(): IProduct[];
 	getProduct(id: string): IProduct;
 	saveProduct(product: IProduct): void;
-	savePreview(id: string): void;
+	savePreview(product: IProduct): void;
 }
 
 export interface IBasket {
@@ -31,3 +32,16 @@ export interface IBasket {
 }
 
 export type TProductBasket = Pick<IProduct, 'id' | 'title' | 'price'>;
+
+export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
+
+export interface ICardActions {
+	onClick: (event: MouseEvent) => void;
+}
+
+export interface IApi {
+	baseUrl: string;
+	get<T>(uri: string): Promise<T>;
+	post<T>(uri: string, data: object, method?: ApiPostMethods): Promise<T>;
+}
+

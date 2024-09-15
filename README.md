@@ -137,10 +137,11 @@ export interface IProductsData {
 
 Так же класс предоставляет набор методов для взаимодействия с этими данными.
 
+- setProducts(products: IProduct[]): void - Метод для заполнения массива товаров
 - getProducts(): IProduct[] - Возвращает массив товаров
 - getProduct(id: string): IProduct - Возвращает один товар по его id
 - saveProduct(product: IProduct): void - Метод для сохранения товаров
-- savePreview(id: string): void - Метод для сохранения Preview
+- savePreview(product: IProduct): void - Метод для сохранения Preview
 
 ### Классы представления
 
@@ -189,6 +190,7 @@ _События изменения данных (генерируются кла
 
 - `cards:changed` - изменение массива карточек
 - `card:selected` - должна провоцировать открытие модального окна карточки
+- `preview:changed` - изменение карточки в модальном окне
 - `modal:open` - открытие модального окна
 - `modal:close` - закрытие модального окна
 - `basket:open` - открываем интерфейс корзины
