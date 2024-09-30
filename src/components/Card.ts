@@ -1,4 +1,5 @@
 import { ICardActions } from '../types';
+import { categories } from '../utils/constants';
 import { ensureElement } from '../utils/utils';
 import { Component } from './base/Component';
 
@@ -26,7 +27,7 @@ export class Card extends Component<ICard> {
 
 		this._category = container.querySelector(`.card__category`);
 		this._title = ensureElement<HTMLElement>(`.card__title`, container);
-		this._image = ensureElement<HTMLImageElement>(`.card__image`, container);
+		this._image = container.querySelector(`.card__image`);
 		this._description = container.querySelector(`.card__text`);
 		this._price = ensureElement<HTMLSpanElement>(`.card__price`, container);
 		this._button = container.querySelector(`.card__button`);
@@ -69,6 +70,7 @@ export class Card extends Component<ICard> {
 
 	set category(value: string) {
 		this.setText(this._category, value);
+		this.toggleClass(this._category, categories.get(value), true);
 	}
 
 	get category() {
@@ -81,5 +83,28 @@ export class Card extends Component<ICard> {
 		} else {
 			this.setText(this._price, 'Бесценно');
 		}
+	}
+}
+
+export class BasketCard extends Card {
+	protected _index: HTMLElement;
+	protected _title: HTMLElement;
+	protected _deleteButton: HTMLElement;
+
+	constructor(container: HTMLElement, actions?: ICardActions) {
+		super(container);
+		this._index = ensureElement<HTMLElement>(`.basket__item-index`, container);
+		this._title = ensureElement<HTMLElement>(`.card__title`, container);
+		this._price = ensureElement<HTMLElement>(`.card__price`, container);
+		this._deleteButton = ensureElement<HTMLButtonElement>(
+			`.basket__item-delete`,
+			container
+		);
+		if (actions && actions.onClick) {
+			this._deleteButton.addEventListener('click', actions.onClick);
+		}
+	}
+	set index(value: number) {
+		this.setText(this._index, value);
 	}
 }

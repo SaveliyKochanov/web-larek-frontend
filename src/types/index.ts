@@ -18,17 +18,19 @@ export interface ICustomer {
 
 export interface IProductsData {
 	products: IProduct[];
-	preview: string | null; //Для сохранения карточки, которую будем открывать
+	preview: string | null;
 	setProducts(products: IProduct[]): void;
 	getProducts(): IProduct[];
 	getProduct(id: string): IProduct;
-	saveProduct(product: IProduct): void;
 	savePreview(product: IProduct): void;
 }
 
-export interface IBasket {
-	items: TProductBasket[];
-	total: number | null;
+export interface IBasketData {
+	products: TProductBasket[];
+	addToBasket(product: IProduct): void;
+	deleteFromBasket(product: IProduct): void;
+	getCardIndex(product: IProduct): number;
+	clearBasket(): void;
 }
 
 export type TProductBasket = Pick<IProduct, 'id' | 'title' | 'price'>;
@@ -44,4 +46,3 @@ export interface IApi {
 	get<T>(uri: string): Promise<T>;
 	post<T>(uri: string, data: object, method?: ApiPostMethods): Promise<T>;
 }
-

@@ -10,7 +10,6 @@ export class ProductsData implements IProductsData {
 		this.events = events;
 	}
 
-	//временный вариант
 	get products(): IProduct[] {
 		return this._products;
 	}
@@ -31,11 +30,9 @@ export class ProductsData implements IProductsData {
 		return this._products.find((product) => product.id === id) || null;
 	}
 
-	saveProduct(product: IProduct): void {}
-
-	savePreview(product: IProduct): void {
+	savePreview(product: IProduct) {
 		this._preview = product.id;
-		this.events.emit('preview:changed');
+		this.events.emit('preview:changed', product);
 	}
 
 	get preview(): string | null {
