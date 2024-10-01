@@ -3,7 +3,6 @@ import { IEvents } from './base/Events';
 
 export class BasketData implements IBasketData {
 	protected _products: TProductBasket[] = [];
-	// protected events: IEvents;
 
 	constructor(protected events: IEvents) {
 		this.events = events;
@@ -35,13 +34,20 @@ export class BasketData implements IBasketData {
 		return this._products.indexOf(product) + 1;
 	}
 
+	getButtonStatus(product: TProductBasket) {
+		if (!this._products.some((card) => card.id == product.id)) {
+			return 'Добавить в корзину';
+		} else {
+			return 'Убрать из корзины';
+		}
+	}
+
 	getBasketPrice() {
 		let total = 0;
 		this._products.map((elem) => {
 			total += elem.price;
 		});
 		return total;
-		// return this._products.reduce((total, card) => total + card.price, 0);
 	}
 
 	getBasketQuantity() {

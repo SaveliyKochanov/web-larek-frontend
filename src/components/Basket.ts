@@ -1,6 +1,7 @@
-import { ICardActions, TProductBasket } from '../types';
+import { IProduct, TProductBasket } from '../types';
 import { createElement, ensureElement } from '../utils/utils';
 import { Component } from './base/Component';
+import { IEvents } from './base/Events';
 
 export interface IBasket {
 	items: TProductBasket[];
@@ -12,7 +13,7 @@ export class Basket extends Component<IBasket> {
 	protected _price: HTMLElement;
 	protected _button: HTMLButtonElement;
 
-	constructor(container: HTMLElement, actions?: ICardActions) {
+	constructor(container: HTMLElement, protected events: IEvents) {
 		super(container);
 
 		this._catalog = ensureElement<HTMLElement>(`.basket__list`, this.container);
@@ -20,6 +21,12 @@ export class Basket extends Component<IBasket> {
 		this._button = container.querySelector(`.basket__button`);
 
 		this.items = [];
+
+		if (this._button) {
+			this._button.addEventListener('click', () => {
+				events.emit('order:open');
+			});
+		}
 	}
 
 	set price(value: number) {

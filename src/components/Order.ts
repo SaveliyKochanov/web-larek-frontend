@@ -1,38 +1,39 @@
-// import { IEvents } from './base/Events'
+import { TOrderPayment } from '../types';
+import { IEvents } from './base/Events';
+import { Form } from './common/Form';
 
-// export class Order extends Component<IOrder> {
-// 	protected _buttonOnline: HTMLElement;
-// 	protected _buttonOnReceipt: HTMLElement;
-// 	protected _address: HTMLElement;
+export class OrderPayment extends Form<TOrderPayment> {
+	protected _buttonOnline: HTMLButtonElement;
+	protected _buttonOnReceipt: HTMLButtonElement;
+	protected _address: HTMLInputElement;
 
-// 	//можно передавать template чтобы делать разные карточки
-// 	constructor(container: HTMLElement, protected events: IEvents) {
-// 		super(container, events);
+	constructor(container: HTMLFormElement, protected events: IEvents) {
+		super(container, events);
+		this._address = container.querySelector(
+			'input[name="address"]'
+		) as HTMLInputElement;
+		this._buttonOnline = container.querySelector(
+			'button[name="card"]'
+		) as HTMLButtonElement;
+		this._buttonOnReceipt = container.querySelector(
+			'button[name="cash"]'
+		) as HTMLButtonElement;
 
-// 		this._image = container.querySelector(`.card__image`);
-// 		this._price = ensureElement<HTMLSpanElement>(`.card__price`, container);
-// 		if (actions?.onClick) {
-// 			if (this._button) {
-// 				this._button.addEventListener('click', actions.onClick);
-// 			} else {
-// 				container.addEventListener('click', actions.onClick);
-// 			}
-// 		}
-// 	}
+		if (this._buttonOnline) {
+			this._buttonOnline.addEventListener('click', () => {
+				events.emit('order:changed', {
+					payment: this._buttonOnReceipt.name,
+					button: this._buttonOnReceipt,
+				});
+			});
+		}
+	}
 
-// 	set id(value: string) {
-// 		this.container.dataset.id = value;
-// 	}
+	set address(value: string) {
+		this._address.value = value;
+	}
 
-// 	get id(): string {
-// 		return this.container.dataset.id || '';
-// 	}
-
-// 	set price(value: string) {
-// 		if (value) {
-// 			this.setText(this._price, `${value} синапсов`);
-// 		} else {
-// 			this.setText(this._price, 'Бесценно');
-// 		}
-// 	}
-// }
+	togglePayment(value: HTMLElement) {
+		this.toggleClass(value, 'button_alt-active', true);
+	}
+}

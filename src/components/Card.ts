@@ -11,6 +11,7 @@ export interface ICard {
 	price: number | null;
 	description: string;
 	selected: boolean;
+	button: string;
 }
 
 export class Card extends Component<ICard> {
@@ -83,6 +84,9 @@ export class Card extends Component<ICard> {
 		} else {
 			this.setText(this._price, 'Бесценно');
 		}
+	}
+	set button(value: string) {
+		this._button.textContent = value;
 	}
 }
 

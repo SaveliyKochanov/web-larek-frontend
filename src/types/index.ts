@@ -9,12 +9,12 @@ export interface IProduct {
 	image: string;
 }
 
-export interface ICustomer {
-	email: string;
-	phone: string;
-	payment: PaymentType;
-	address: string;
-}
+// export interface ICustomer {
+// 	email: string;
+// 	phone: string;
+// 	payment: PaymentType;
+// 	address: string;
+// }
 
 export interface IProductsData {
 	products: IProduct[];
@@ -32,6 +32,25 @@ export interface IBasketData {
 	getCardIndex(product: IProduct): number;
 	clearBasket(): void;
 }
+
+export interface IOrderData {}
+
+export interface IForm {
+	valid: boolean;
+	errors: string[];
+}
+
+export interface IOrder {
+	total: number;
+	items: string[];
+	email: string;
+	phone: string;
+	address: string;
+	payment: string;
+}
+
+export type TOrderPayment = Pick<IOrder, 'payment' | 'address'>;
+export type TOrderContact = Pick<IOrder, 'email' | 'phone'>;
 
 export type TProductBasket = Pick<IProduct, 'id' | 'title' | 'price'>;
 

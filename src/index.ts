@@ -1,6 +1,8 @@
 import { Basket } from './components/Basket';
 import { BasketData } from './components/BasketData';
 import { BasketCard, Card } from './components/Card';
+import { OrderPayment } from './components/Order';
+import { OrderData } from './components/OrderData';
 import { Page } from './components/Page';
 import { ProductsData } from './components/ProductsData';
 import { WebAPI } from './components/WebApi';
@@ -18,6 +20,7 @@ const api = new WebAPI(CDN_URL, baseApi);
 
 const productsData = new ProductsData(events);
 const basketData = new BasketData(events);
+const orderData = new OrderData(events);
 
 const cardCatalogTemplate = ensureElement<HTMLTemplateElement>('#card-catalog');
 const cardPreviewTemplate = ensureElement<HTMLTemplateElement>('#card-preview');
@@ -31,8 +34,8 @@ const body = document.body;
 const page = new Page(body, events);
 
 const modal = new Modal(modalTemplate, events);
-const basket = new Basket(cloneTemplate(basketTemplate));
-const orderForm = new Basket(cloneTemplate(orderTemplate));
+const basket = new Basket(cloneTemplate(basketTemplate), events);
+const orderForm = new OrderPayment(cloneTemplate(orderTemplate), events);
 
 api.getProducts().then((response) => {
 	if (Array.isArray(response)) {
@@ -74,7 +77,7 @@ events.on('preview:changed', (product: IProduct) => {
 			description: product.description,
 			price: product.price,
 			category: product.category,
-			// button: appData.getButtonStatus(item),
+			button: basketData.getButtonStatus(product),
 		}),
 	});
 });
@@ -100,6 +103,7 @@ events.on('basket:changed', () => {
 				basketData.deleteFromBasket(basketCard);
 			},
 		});
+		newBasketCard.index = basketData.getCardIndex(basketCard);
 
 		return newBasketCard.render({
 			title: basketCard.title,
@@ -116,8 +120,16 @@ events.on('modal:close', () => {
 	page.locked = false;
 });
 
-// events.on('order:open', () => {
-// 	modal.render({
-// 		content: orderForm.
-// 	})
-// });
+events.on('order:open', () => {
+	modal.render({
+		content: orderForm.render({
+			address: '',
+			valid: false,
+			errors: [],
+		}),
+	});
+});
+
+events.on('order:changed', (data: { payment: string; button: HTMLElement }) => {
+	orderForm.togglePayment(data.button);
+});
