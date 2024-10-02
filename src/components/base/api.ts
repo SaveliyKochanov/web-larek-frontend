@@ -8,10 +8,7 @@ export type ApiListResponse<Type> = {
 export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
 
 export class Api implements IApi {
-	// readonly baseUrl: string;
-	protected options: RequestInit;
-
-	constructor(readonly baseUrl: string, options: RequestInit = {}) {
+	constructor(readonly baseUrl: string, protected options: RequestInit = {}) {
 		this.baseUrl = baseUrl;
 		this.options = {
 			headers: {

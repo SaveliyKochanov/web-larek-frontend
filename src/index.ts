@@ -1,7 +1,7 @@
 import { Basket } from './components/Basket';
 import { BasketData } from './components/BasketData';
 import { BasketCard, Card } from './components/Card';
-import { OrderPayment } from './components/Order';
+import { OrderContacts, OrderPayment } from './components/Order';
 import { OrderData } from './components/OrderData';
 import { Page } from './components/Page';
 import { ProductsData } from './components/ProductsData';
@@ -9,8 +9,9 @@ import { WebAPI } from './components/WebApi';
 import { Api } from './components/base/Api';
 import { EventEmitter, IEvents } from './components/base/Events';
 import { Modal } from './components/common/Modal';
+import { Success } from './components/common/Success';
 import './scss/styles.scss';
-import { IApi, IProduct } from './types/index';
+import { IApi, IOrder, IProduct, PaymentType } from './types/index';
 import { API_URL, CDN_URL } from './utils/constants';
 import { cloneTemplate, ensureElement } from './utils/utils';
 
@@ -29,6 +30,7 @@ const basketTemplate = ensureElement<HTMLTemplateElement>('#basket');
 const orderTemplate = ensureElement<HTMLTemplateElement>('#order');
 const contactsTemplate = ensureElement<HTMLTemplateElement>('#contacts');
 const modalTemplate = ensureElement<HTMLTemplateElement>('#modal-container');
+const successTemplate = ensureElement<HTMLTemplateElement>('#success');
 const body = document.body;
 
 const page = new Page(body, events);
@@ -36,6 +38,7 @@ const page = new Page(body, events);
 const modal = new Modal(modalTemplate, events);
 const basket = new Basket(cloneTemplate(basketTemplate), events);
 const orderForm = new OrderPayment(cloneTemplate(orderTemplate), events);
+const contactForm = new OrderContacts(cloneTemplate(contactsTemplate), events);
 
 api.getProducts().then((response) => {
 	if (Array.isArray(response)) {
@@ -83,9 +86,7 @@ events.on('preview:changed', (product: IProduct) => {
 });
 
 events.on('card:basket', (product: IProduct) => {
-	console.log('Добавление товара в корзину:', product);
 	basketData.isBasketCard(product);
-	console.log('Товар добавлен в корзину', basketData.products);
 });
 
 events.on('basket:open', () => {
@@ -130,6 +131,62 @@ events.on('order:open', () => {
 	});
 });
 
-events.on('order:changed', (data: { payment: string; button: HTMLElement }) => {
-	orderForm.togglePayment(data.button);
+events.on(
+	/^order\..*:changed/,
+	(data: {
+		field: keyof Pick<IOrder, 'address' | 'phone' | 'email'>;
+		value: string;
+	}) => {
+		orderData.setOrderField(data.field, data.value);
+	}
+);
+
+events.on(
+	'order:changed',
+	(data: { payment: PaymentType; button: HTMLElement }) => {
+		orderForm.togglePayment(data.button);
+		orderData.setOrderPayment(data.payment);
+		orderData.validateOrder();
+	}
+);
+
+events.on('errors:changed', (errors: Partial<IOrder>) => {
+	const { email, phone, address, payment } = errors;
+
+	orderForm.valid = !(payment || address);
+	orderForm.errors = [payment, address].filter(Boolean).join('; ');
+
+	contactForm.valid = !(email || phone);
+	contactForm.errors = [email, phone].filter(Boolean).join('; ');
+});
+
+events.on('order:submit', () => {
+	modal.render({
+		content: contactForm.render({
+			phone: '',
+			email: '',
+			valid: false,
+			errors: [],
+		}),
+	});
+});
+
+events.on('contacts:submit', () => {
+	basketData.sendBasketToOrder(orderData);
+
+	api
+		.orderProducts(orderData.order)
+		.then((result) => {
+			const success = new Success(cloneTemplate(successTemplate), {
+				onClick: () => {
+					modal.close();
+				},
+			});
+			basketData.clearBasket();
+			orderData.clearOrder();
+			modal.render({ content: success.render({ total: result.total }) });
+		})
+		.catch((err) => {
+			console.error(`Ошибка выполнения заказа: ${err}`);
+		});
 });

@@ -1,4 +1,4 @@
-import { IProduct, TProductBasket } from '../types';
+import { TProductBasket } from '../types';
 import { createElement, ensureElement } from '../utils/utils';
 import { Component } from './base/Component';
 import { IEvents } from './base/Events';
@@ -29,19 +29,29 @@ export class Basket extends Component<IBasket> {
 		}
 	}
 
+	updateButtonState() {
+		const totalPrice = parseFloat(this._price.textContent || '0');
+
+		if (totalPrice > 0) {
+			this.setDisabled(this._button, false);
+		} else {
+			this.setDisabled(this._button, true);
+		}
+	}
+
 	set price(value: number) {
-		this._price.textContent = value + ' синапсов';
+		this._price.textContent = `${value} синапсов`;
+		this.updateButtonState();
 	}
 
 	set items(items: HTMLElement[]) {
 		if (items.length) {
 			this._catalog.replaceChildren(...items);
-			this.setDisabled(this._button, false);
 		} else {
 			this._catalog.replaceChildren(
 				createElement('p', { textContent: 'Товары еще не добавлены в корзину' })
 			);
-			this.setDisabled(this._button, true);
 		}
+		this.updateButtonState();
 	}
 }

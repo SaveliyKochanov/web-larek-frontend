@@ -22,7 +22,6 @@ export class Card extends Component<ICard> {
 	protected _button: HTMLButtonElement;
 	protected _price: HTMLElement;
 
-	//можно передавать template чтобы делать разные карточки
 	constructor(container: HTMLElement, actions?: ICardActions) {
 		super(container);
 

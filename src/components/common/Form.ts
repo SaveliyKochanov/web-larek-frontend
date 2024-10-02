@@ -15,6 +15,31 @@ export class Form<T> extends Component<IForm> {
 			this.container
 		);
 		this._errors = ensureElement<HTMLElement>('.form__errors', this.container);
+
+		this.container.addEventListener('input', ({ target }) => {
+			const { name, value } = target as HTMLInputElement;
+			this.onInputChange(name as keyof T, value);
+		});
+
+		this.container.addEventListener('submit', (e) => {
+			e.preventDefault();
+			this.events.emit(`${this.container.name}:submit`);
+		});
+	}
+
+	set valid(value: boolean) {
+		this._submitButton.disabled = !value;
+	}
+
+	set errors(value: string) {
+		this.setText(this._errors, value);
+	}
+
+	protected onInputChange(field: keyof T, value: string) {
+		this.events.emit(`order.${field.toString()}:changed`, {
+			field,
+			value,
+		});
 	}
 
 	render(state: Partial<T> & IForm) {

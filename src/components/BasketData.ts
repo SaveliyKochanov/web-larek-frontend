@@ -1,4 +1,4 @@
-import { IBasketData, TProductBasket } from '../types';
+import { IBasketData, IOrderData, TProductBasket } from '../types';
 import { IEvents } from './base/Events';
 
 export class BasketData implements IBasketData {
@@ -35,11 +35,9 @@ export class BasketData implements IBasketData {
 	}
 
 	getButtonStatus(product: TProductBasket) {
-		if (!this._products.some((card) => card.id == product.id)) {
-			return 'Добавить в корзину';
-		} else {
-			return 'Убрать из корзины';
-		}
+		return !this._products.some((card) => card.id === product.id)
+			? 'Купить'
+			: 'Убрать';
 	}
 
 	getBasketPrice() {
@@ -53,8 +51,16 @@ export class BasketData implements IBasketData {
 	getBasketQuantity() {
 		return this._products.length;
 	}
+
 	clearBasket() {
 		this._products = [];
 		this.events.emit('basket:changed');
+	}
+
+	sendBasketToOrder(orderData: IOrderData) {
+		const orderItems = this._products.map((product) => product.id);
+
+		orderData.setOrderField('items', orderItems);
+		orderData.setOrderField('total', this.getBasketPrice());
 	}
 }

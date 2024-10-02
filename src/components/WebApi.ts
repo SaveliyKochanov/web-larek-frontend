@@ -1,4 +1,4 @@
-import { IProduct } from '../types';
+import { IOrder, IProduct } from '../types';
 import { IApi } from './../types/index';
 import { ApiListResponse } from './base/Api';
 
@@ -27,5 +27,11 @@ export class WebAPI {
 			...product,
 			image: this.cdn + product.image,
 		}));
+	}
+
+	orderProducts(order: IOrder): Promise<IOrder> {
+		return this._baseApi
+			.post<IOrder>(`/order`, order)
+			.then((data: IOrder) => data);
 	}
 }

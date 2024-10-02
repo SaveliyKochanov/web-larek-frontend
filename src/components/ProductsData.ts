@@ -4,9 +4,8 @@ import { IEvents } from './base/Events';
 export class ProductsData implements IProductsData {
 	protected _products: IProduct[] = [];
 	protected _preview: string | null = null;
-	protected events: IEvents;
 
-	constructor(events: IEvents) {
+	constructor(protected events: IEvents) {
 		this.events = events;
 	}
 

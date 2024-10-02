@@ -1,4 +1,4 @@
-type PaymentType = 'online' | 'received';
+export type PaymentType = 'online' | 'received';
 
 export interface IProduct {
 	id: string;
@@ -8,13 +8,6 @@ export interface IProduct {
 	category: string;
 	image: string;
 }
-
-// export interface ICustomer {
-// 	email: string;
-// 	phone: string;
-// 	payment: PaymentType;
-// 	address: string;
-// }
 
 export interface IProductsData {
 	products: IProduct[];
@@ -30,10 +23,23 @@ export interface IBasketData {
 	addToBasket(product: IProduct): void;
 	deleteFromBasket(product: IProduct): void;
 	getCardIndex(product: IProduct): number;
+	getButtonStatus(product: TProductBasket): string;
+	getBasketPrice(): number;
+	getBasketQuantity(): number;
 	clearBasket(): void;
+	sendBasketToOrder(orderData: IOrderData): void;
 }
 
-export interface IOrderData {}
+export interface IOrderData {
+	formErrors: TFormErrors;
+	order: IOrder;
+	setOrderPayment(value: string): void;
+	setOrderEmail(value: string): void;
+	setOrderField(field: keyof TOrderInput, value: string): void;
+	setOrderField(field: keyof IOrder, value: IOrder[keyof IOrder]): void;
+	validateOrder(): boolean;
+	clearOrder(): void;
+}
 
 export interface IForm {
 	valid: boolean;
@@ -51,6 +57,11 @@ export interface IOrder {
 
 export type TOrderPayment = Pick<IOrder, 'payment' | 'address'>;
 export type TOrderContact = Pick<IOrder, 'email' | 'phone'>;
+export type TOrderInput = Pick<
+	IOrder,
+	'payment' | 'address' | 'email' | 'phone'
+>;
+export type TFormErrors = Partial<Record<keyof IOrder, string>>;
 
 export type TProductBasket = Pick<IProduct, 'id' | 'title' | 'price'>;
 
@@ -58,6 +69,9 @@ export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
 
 export interface ICardActions {
 	onClick: (event: MouseEvent) => void;
+}
+export interface ISuccessActions {
+	onClick: () => void;
 }
 
 export interface IApi {
