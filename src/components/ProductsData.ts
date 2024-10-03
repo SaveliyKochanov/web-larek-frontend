@@ -1,5 +1,5 @@
 import { IProduct, IProductsData } from '../types';
-import { IEvents } from './base/Events';
+import { IEvents } from './base/events';
 
 export class ProductsData implements IProductsData {
 	protected _products: IProduct[] = [];

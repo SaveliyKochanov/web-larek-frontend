@@ -1,6 +1,6 @@
 import { IOrder, IProduct } from '../types';
 import { IApi } from './../types/index';
-import { ApiListResponse } from './base/Api';
+import { ApiListResponse } from './base/api';
 
 export class WebAPI {
 	private _baseApi: IApi;

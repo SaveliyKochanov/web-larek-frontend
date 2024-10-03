@@ -1,6 +1,6 @@
 import { IOrder, IOrderData, PaymentType } from '../types';
 import { TFormErrors, TOrderInput } from './../types/index';
-import { IEvents } from './base/Events';
+import { IEvents } from './base/events';
 
 export class OrderData implements IOrderData {
 	protected _formErrors: TFormErrors;

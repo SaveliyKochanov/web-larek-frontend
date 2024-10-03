@@ -1,5 +1,5 @@
 import { IBasketData, IOrderData, TProductBasket } from '../types';
-import { IEvents } from './base/Events';
+import { IEvents } from './base/events';
 
 export class BasketData implements IBasketData {
 	protected _products: TProductBasket[] = [];
